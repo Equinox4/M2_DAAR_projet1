@@ -1,6 +1,7 @@
 package app;
 
 import java.util.ArrayList;
+import static app.Constants.*;
 
 public class RegExTree {
 
@@ -23,13 +24,13 @@ public class RegExTree {
     }
 
     private String rootToString() {
-        if (root == RegEx.CONCAT)
+        if (root == CONCAT)
             return ".";
-        if (root == RegEx.ETOILE)
+        if (root == ETOILE)
             return "*";
-        if (root == RegEx.ALTERN)
+        if (root == ALTERN)
             return "|";
-        if (root == RegEx.DOT)
+        if (root == DOT)
             return ".";
         return Character.toString((char) root);
     }

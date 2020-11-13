@@ -1,35 +1,53 @@
 package app;
 
-import java.util.Scanner;
 import java.util.ArrayList;
 
-import java.lang.Exception;
+import static app.Constants.*;
 
 public class RegEx {
-    // MACROS
-    static final int CONCAT = 0xC04CA7;
-    static final int ETOILE = 0xE7011E;
-    static final int ALTERN = 0xA17E54;
-    static final int PROTECTION = 0xBADDAD;
 
-    static final int PARENTHESEOUVRANT = 0x16641664;
-    static final int PARENTHESEFERMANT = 0x51515151;
-    static final int DOT = 0xD07;
-
-    // REGEX
-    private static String regEx;
+    private String regEx;
+    private RegExTree regexTree;
+    protected ArrayList<String> alphabet;
 
     // CONSTRUCTOR
-    public RegEx(String regEx) {}
+    public RegEx(String regEx) {
+        this.regEx = regEx;
+        try {
+            this.regexTree = RegEx.parse(this);
+            this.alphabet = alphabet(this.regexTree, new ArrayList<>());
+            this.alphabet.add("epsilon");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    // FROM REGEX TO SYNTAX TREE
-    private static RegExTree parse() throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
-        for (int i = 0; i < regEx.length(); i++)
-            result.add(new RegExTree(charToRoot(regEx.charAt(i)), new ArrayList<RegExTree>()));
+    private static RegExTree parse(RegEx regex) throws Exception {
+        ArrayList<RegExTree> result = new ArrayList<>();
+        for (int i = 0; i < regex.getRegEx().length(); i++)
+            result.add(new RegExTree(charToRoot(regex.getRegEx().charAt(i)), new ArrayList<>()));
 
         return parse(result);
     }
+
+    private String getRegEx() {
+        return this.regEx;
+    }
+
+    public RegExTree getRegExTree() {
+        return this.regexTree;
+    }
+
+    /*
+    // FROM REGEX TO SYNTAX TREE
+    private static RegExTree parse() throws Exception {
+        ArrayList<RegExTree> result = new ArrayList<>();
+        for (int i = 0; i < regEx.length(); i++)
+            result.add(new RegExTree(charToRoot(RegEx.charAt(i)), new ArrayList<>()));
+
+        return parse(result);
+    }
+    */
 
     private static int charToRoot(char c) {
         if (c == '.')
@@ -104,7 +122,7 @@ public class RegEx {
     }
 
     private static ArrayList<RegExTree> processEtoile(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+        ArrayList<RegExTree> result = new ArrayList<>();
         boolean found = false;
         for (RegExTree t : trees) {
             if (!found && t.root == ETOILE && t.subTrees.isEmpty()) {
@@ -112,7 +130,7 @@ public class RegEx {
                     throw new Exception();
                 found = true;
                 RegExTree last = result.remove(result.size() - 1);
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(last);
                 result.add(new RegExTree(ETOILE, subTrees));
             } else {
@@ -139,7 +157,7 @@ public class RegEx {
     }
 
     private static ArrayList<RegExTree> processConcat(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+        ArrayList<RegExTree> result = new ArrayList<>();
         boolean found = false;
         boolean firstFound = false;
         for (RegExTree t : trees) {
@@ -233,6 +251,41 @@ public class RegEx {
         subTrees.add(a);
         subTrees.add(dotBCEtoile);
         return new RegExTree(ALTERN, subTrees);
+    }
+
+    public static ArrayList<String> alphabet(RegExTree origin, ArrayList<String> alphabet) {
+
+        String letter_to_consider = Character.toString((char) origin.root);
+        if (origin.subTrees.isEmpty()) {
+            if (!alphabet.contains(letter_to_consider) && !letter_to_consider.equals("+")) {
+                alphabet.add(Character.toString((char) origin.root));
+            }
+            return alphabet;
+        }
+
+        if (origin.root >= 65 && origin.root <= 122 && !alphabet.contains(letter_to_consider)) {
+            alphabet.add(letter_to_consider);
+            for (RegExTree subtree : origin.subTrees) {
+                alphabet.addAll(alphabet(subtree, alphabet));
+            }
+            return alphabet;
+        } else {
+            for (RegExTree subtree : origin.subTrees) {
+                ArrayList<String> tmp = alphabet(subtree, alphabet);
+                if (alphabet.containsAll(tmp)) {
+                    continue;
+                } else {
+                    ArrayList<String> copy = (ArrayList<String>) alphabet.clone();
+                    copy.retainAll(tmp);
+                    alphabet.addAll(copy);
+                }
+            }
+        }
+        return alphabet;
+    }
+
+    public String toString() {
+        return this.regexTree.toString();
     }
 }
 
