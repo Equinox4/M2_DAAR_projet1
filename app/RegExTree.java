@@ -1,14 +1,13 @@
 package app;
 
-import java.util.ArrayList;
-import static app.Constants.*;
+import java.util.List;
 
 public class RegExTree {
 
     protected int root;
-    protected ArrayList<RegExTree> subTrees;
+    protected List<RegExTree> subTrees;
 
-    public RegExTree(int root, ArrayList<RegExTree> subTrees) {
+    public RegExTree(int root, List<RegExTree> subTrees) {
         this.root = root;
         this.subTrees = subTrees;
     }
@@ -24,15 +23,17 @@ public class RegExTree {
     }
 
     private String rootToString() {
-        if (root == CONCAT)
+        if (root == Operand.CONCAT.getValue())
             return ".";
-        if (root == ETOILE)
+        if (root == Operand.ETOILE.getValue())
             return "*";
-        if (root == ALTERN)
+        if (root == Operand.ALTERN.getValue())
             return "|";
-        if (root == DOT)
+        if (root == Operand.DOT.getValue())
             return ".";
+        
         return Character.toString((char) root);
     }
+
 
 }

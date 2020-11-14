@@ -26,9 +26,25 @@ public class AutomataBuilder {
             this.automatons.add(a);
         } 
         else {
+
+            /*
+            if (ret.root == CONCAT) {
+                ArrayList<Automata> automata_to_link = new ArrayList<>();
+                for (RegExTree t : ret.subTrees) {
+                    automata_to_link.add(this.parseRegExTree(t));
+                }
+                State sInitial = new State(this.currentState);
+                currentState++;
+                Transition t = new Transition("ε", automata_to_link.get(0));
+                sInitial.addTransition(t);
+                State sFinal = new State(this.currentState);
+            }
+            */
+        
             for (RegExTree t : ret.subTrees) {
                 this.parseRegExTree(t);
             }
+        
         }
     }
 

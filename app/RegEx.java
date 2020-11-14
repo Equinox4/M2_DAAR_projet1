@@ -2,17 +2,15 @@ package app;
 
 import java.util.ArrayList;
 
-import static app.Constants.*;
-
 public class RegEx {
 
-    private String regEx;
+    private String regex;
     private RegExTree regexTree;
     protected ArrayList<String> alphabet;
 
     // CONSTRUCTOR
     public RegEx(String regEx) {
-        this.regEx = regEx;
+        this.regex = regEx;
         try {
             this.regexTree = RegEx.parse(this);
             this.alphabet = alphabet(this.regexTree, new ArrayList<>());
@@ -31,7 +29,7 @@ public class RegEx {
     }
 
     private String getRegEx() {
-        return this.regEx;
+        return this.regex;
     }
 
     public RegExTree getRegExTree() {
@@ -50,17 +48,14 @@ public class RegEx {
     */
 
     private static int charToRoot(char c) {
-        if (c == '.')
-            return DOT;
-        if (c == '*')
-            return ETOILE;
-        if (c == '|')
-            return ALTERN;
-        if (c == '(')
-            return PARENTHESEOUVRANT;
-        if (c == ')')
-            return PARENTHESEFERMANT;
-        return (int) c;
+        switch (c) {
+            case '.': return Operand.CONCAT.getValue();
+            case '*': return Operand.ETOILE.getValue();
+            case '|': return Operand.ALTERN.getValue();
+            case '(': return Operand.PARENTHESEOUVRANT.getValue();
+            case ')': return Operand.PARENTHESEFERMANT.getValue();
+            default: return (int) c;
+        }
     }
 
     private static RegExTree parse(ArrayList<RegExTree> result) throws Exception {
@@ -81,20 +76,21 @@ public class RegEx {
 
     private static boolean containParenthese(ArrayList<RegExTree> trees) {
         for (RegExTree t : trees)
-            if (t.root == PARENTHESEFERMANT || t.root == PARENTHESEOUVRANT)
+            if (t.root == Operand.PARENTHESEFERMANT.getValue() || t.root == Operand.PARENTHESEOUVRANT.getValue())
                 return true;
         return false;
     }
 
+    // TODO: refactor
     private static ArrayList<RegExTree> processParenthese(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+        ArrayList<RegExTree> result = new ArrayList<>();
         boolean found = false;
         for (RegExTree t : trees) {
-            if (!found && t.root == PARENTHESEFERMANT) {
+            if (!found && t.root == Operand.PARENTHESEFERMANT.getValue()) {
                 boolean done = false;
-                ArrayList<RegExTree> content = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> content = new ArrayList<>();
                 while (!done && !result.isEmpty())
-                    if (result.get(result.size() - 1).root == PARENTHESEOUVRANT) {
+                    if (result.get(result.size() - 1).root == Operand.PARENTHESEOUVRANT.getValue()) {
                         done = true;
                         result.remove(result.size() - 1);
                     } else
@@ -102,9 +98,9 @@ public class RegEx {
                 if (!done)
                     throw new Exception();
                 found = true;
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(parse(content));
-                result.add(new RegExTree(PROTECTION, subTrees));
+                result.add(new RegExTree(Operand.PROTECTION.getValue(), subTrees));
             } else {
                 result.add(t);
             }
@@ -116,7 +112,7 @@ public class RegEx {
 
     private static boolean containEtoile(ArrayList<RegExTree> trees) {
         for (RegExTree t : trees)
-            if (t.root == ETOILE && t.subTrees.isEmpty())
+            if (t.root == Operand.ETOILE.getValue() && t.subTrees.isEmpty())
                 return true;
         return false;
     }
@@ -125,14 +121,14 @@ public class RegEx {
         ArrayList<RegExTree> result = new ArrayList<>();
         boolean found = false;
         for (RegExTree t : trees) {
-            if (!found && t.root == ETOILE && t.subTrees.isEmpty()) {
+            if (!found && t.root == Operand.ETOILE.getValue() && t.subTrees.isEmpty()) {
                 if (result.isEmpty())
                     throw new Exception();
                 found = true;
                 RegExTree last = result.remove(result.size() - 1);
                 ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(last);
-                result.add(new RegExTree(ETOILE, subTrees));
+                result.add(new RegExTree(Operand.ETOILE.getValue(), subTrees));
             } else {
                 result.add(t);
             }
@@ -143,15 +139,18 @@ public class RegEx {
     private static boolean containConcat(ArrayList<RegExTree> trees) {
         boolean firstFound = false;
         for (RegExTree t : trees) {
-            if (!firstFound && t.root != ALTERN) {
+            if (!firstFound && t.root != Operand.ALTERN.getValue()) {
                 firstFound = true;
                 continue;
             }
-            if (firstFound)
-                if (t.root != ALTERN)
+            if (firstFound) {
+                if (t.root != Operand.ALTERN.getValue()) {
                     return true;
-                else
+                }
+                else {
                     firstFound = false;
+                }
+            }
         }
         return false;
     }
@@ -161,24 +160,23 @@ public class RegEx {
         boolean found = false;
         boolean firstFound = false;
         for (RegExTree t : trees) {
-            if (!found && !firstFound && t.root != ALTERN) {
+            if (!found && !firstFound && t.root != Operand.ALTERN.getValue()) {
                 firstFound = true;
                 result.add(t);
-                continue;
             }
-            if (!found && firstFound && t.root == ALTERN) {
+            else if (!found && firstFound && t.root == Operand.ALTERN.getValue()) {
                 firstFound = false;
                 result.add(t);
-                continue;
             }
-            if (!found && firstFound && t.root != ALTERN) {
+            else if (!found && firstFound && t.root != Operand.ALTERN.getValue()) {
                 found = true;
                 RegExTree last = result.remove(result.size() - 1);
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(last);
                 subTrees.add(t);
-                result.add(new RegExTree(CONCAT, subTrees));
-            } else {
+                result.add(new RegExTree(Operand.CONCAT.getValue(), subTrees));
+            }
+            else {
                 result.add(t);
             }
         }
@@ -187,18 +185,18 @@ public class RegEx {
 
     private static boolean containAltern(ArrayList<RegExTree> trees) {
         for (RegExTree t : trees)
-            if (t.root == ALTERN && t.subTrees.isEmpty())
+            if (t.root == Operand.ALTERN.getValue() && t.subTrees.isEmpty())
                 return true;
         return false;
     }
 
     private static ArrayList<RegExTree> processAltern(ArrayList<RegExTree> trees) throws Exception {
-        ArrayList<RegExTree> result = new ArrayList<RegExTree>();
+        ArrayList<RegExTree> result = new ArrayList<>();
         boolean found = false;
         RegExTree gauche = null;
         boolean done = false;
         for (RegExTree t : trees) {
-            if (!found && t.root == ALTERN && t.subTrees.isEmpty()) {
+            if (!found && t.root == Operand.ALTERN.getValue() && t.subTrees.isEmpty()) {
                 if (result.isEmpty())
                     throw new Exception();
                 found = true;
@@ -209,10 +207,10 @@ public class RegEx {
                 if (gauche == null)
                     throw new Exception();
                 done = true;
-                ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+                ArrayList<RegExTree> subTrees = new ArrayList<>();
                 subTrees.add(gauche);
                 subTrees.add(t);
-                result.add(new RegExTree(ALTERN, subTrees));
+                result.add(new RegExTree(Operand.ALTERN.getValue(), subTrees));
             } else {
                 result.add(t);
             }
@@ -221,14 +219,14 @@ public class RegEx {
     }
 
     private static RegExTree removeProtection(RegExTree tree) throws Exception {
-        if (tree.root == PROTECTION && tree.subTrees.size() != 1)
+        if (tree.root == Operand.PROTECTION.getValue() && tree.subTrees.size() != 1)
             throw new Exception();
         if (tree.subTrees.isEmpty())
             return tree;
-        if (tree.root == PROTECTION)
+        if (tree.root == Operand.PROTECTION.getValue())
             return removeProtection(tree.subTrees.get(0));
 
-        ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+        ArrayList<RegExTree> subTrees = new ArrayList<>();
         for (RegExTree t : tree.subTrees)
             subTrees.add(removeProtection(t));
         return new RegExTree(tree.root, subTrees);
@@ -236,46 +234,45 @@ public class RegEx {
 
     // EXAMPLE
     // --> RegEx from Aho-Ullman book Chap.10 Example 10.25
-    private static RegExTree exampleAhoUllman() {
-        RegExTree a = new RegExTree((int) 'a', new ArrayList<RegExTree>());
-        RegExTree b = new RegExTree((int) 'b', new ArrayList<RegExTree>());
-        RegExTree c = new RegExTree((int) 'c', new ArrayList<RegExTree>());
-        ArrayList<RegExTree> subTrees = new ArrayList<RegExTree>();
+    public static RegExTree exampleAhoUllman() {
+        RegExTree a = new RegExTree((int) 'a', new ArrayList<>());
+        RegExTree b = new RegExTree((int) 'b', new ArrayList<>());
+        RegExTree c = new RegExTree((int) 'c', new ArrayList<>());
+        ArrayList<RegExTree> subTrees = new ArrayList<>();
         subTrees.add(c);
-        RegExTree cEtoile = new RegExTree(ETOILE, subTrees);
-        subTrees = new ArrayList<RegExTree>();
+        RegExTree cEtoile = new RegExTree(Operand.ETOILE.getValue(), subTrees);
+        subTrees = new ArrayList<>();
         subTrees.add(b);
         subTrees.add(cEtoile);
-        RegExTree dotBCEtoile = new RegExTree(CONCAT, subTrees);
-        subTrees = new ArrayList<RegExTree>();
+        RegExTree dotBCEtoile = new RegExTree(Operand.CONCAT.getValue(), subTrees);
+        subTrees = new ArrayList<>();
         subTrees.add(a);
         subTrees.add(dotBCEtoile);
-        return new RegExTree(ALTERN, subTrees);
+        return new RegExTree(Operand.ALTERN.getValue(), subTrees);
     }
 
     public static ArrayList<String> alphabet(RegExTree origin, ArrayList<String> alphabet) {
 
-        String letter_to_consider = Character.toString((char) origin.root);
+        String letterToConsider = Character.toString((char) origin.root);
         if (origin.subTrees.isEmpty()) {
-            if (!alphabet.contains(letter_to_consider) && !letter_to_consider.equals("+")) {
+            if (!alphabet.contains(letterToConsider) && !letterToConsider.equals("+")) {
                 alphabet.add(Character.toString((char) origin.root));
             }
             return alphabet;
         }
 
-        if (origin.root >= 65 && origin.root <= 122 && !alphabet.contains(letter_to_consider)) {
-            alphabet.add(letter_to_consider);
+        if (origin.root >= 65 && origin.root <= 122 && !alphabet.contains(letterToConsider)) {
+            alphabet.add(letterToConsider);
             for (RegExTree subtree : origin.subTrees) {
                 alphabet.addAll(alphabet(subtree, alphabet));
             }
             return alphabet;
-        } else {
+        }
+        else {
             for (RegExTree subtree : origin.subTrees) {
                 ArrayList<String> tmp = alphabet(subtree, alphabet);
-                if (alphabet.containsAll(tmp)) {
-                    continue;
-                } else {
-                    ArrayList<String> copy = (ArrayList<String>) alphabet.clone();
+                if (!alphabet.containsAll(tmp)) {
+                    ArrayList<String> copy = new ArrayList<>(alphabet);
                     copy.retainAll(tmp);
                     alphabet.addAll(copy);
                 }
