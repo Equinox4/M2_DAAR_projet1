@@ -21,6 +21,10 @@ public class State {
         return this.id;
     }
 
+    public void setFinal(boolean isFinal) {
+        this.isFinal = isFinal;
+    }
+
     public boolean isFinal() {
         return this.isFinal;
     }

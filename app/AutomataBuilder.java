@@ -19,6 +19,7 @@ public class AutomataBuilder {
             this.currentState++;
 
             State sFinal = new State(this.currentState);
+            sFinal.setFinal(true);
             Transition t = new Transition(rootValue, sFinal);
             sInitial.addTransition(t);
 
@@ -26,9 +27,8 @@ public class AutomataBuilder {
             this.automatons.add(a);
         } 
         else {
-
             /*
-            if (ret.root == CONCAT) {
+            if (ret.root == Operand.CONCAT.getValue()) {
                 ArrayList<Automata> automata_to_link = new ArrayList<>();
                 for (RegExTree t : ret.subTrees) {
                     automata_to_link.add(this.parseRegExTree(t));
@@ -39,12 +39,11 @@ public class AutomataBuilder {
                 sInitial.addTransition(t);
                 State sFinal = new State(this.currentState);
             }
-            */
         
             for (RegExTree t : ret.subTrees) {
                 this.parseRegExTree(t);
             }
-        
+            */
         }
     }
 
