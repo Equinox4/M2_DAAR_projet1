@@ -6,15 +6,23 @@ import java.util.List;
 public class State {
     private int id;
     private ArrayList<Transition> transitions; // quelles sont les transitions qui partent de cet etat
-    private boolean isFinal = false;
+    private boolean isFinal = true;
+
+    public State() {
+        this.transitions = new ArrayList<>();
+    }
 
     public State(int id) {
+        this();
         this.id = id;
-        this.transitions = new ArrayList<>();
     }
 
     public State(State s) {
         this(s.id);
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
@@ -31,6 +39,7 @@ public class State {
 
     public void addTransition (Transition t) {
         this.transitions.add(t);
+        this.isFinal = false;
     }
 
     public List<Transition> getTransitions() {
