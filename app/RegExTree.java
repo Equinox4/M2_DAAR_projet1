@@ -31,7 +31,7 @@ public class RegExTree {
             return "|";
         if (root == Operand.DOT.getValue())
             return ".";
-        
+
         return Character.toString((char) root);
     }
 
