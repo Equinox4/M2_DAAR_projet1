@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class AutomataBuilder {
     private ArrayList<Automata> automatons;
     private int currentState;
-    private static final String EPSYLON = "epsylon";
+    private static final String EPSILON = "epsylon"; // epsilon :P
 
     public AutomataBuilder() {
         this.automatons = new ArrayList<>();
@@ -63,10 +63,10 @@ public class AutomataBuilder {
         State unionInitialState = new State();
         State unionFinalState = new State();
 
-        Transition t1 = new Transition(EPSYLON, a1Copy.getInitialState());
-        Transition t2 = new Transition(EPSYLON, a2Copy.getInitialState());
-        Transition t3 = new Transition(EPSYLON, unionFinalState);
-        Transition t4 = new Transition(EPSYLON, unionFinalState);
+        Transition t1 = new Transition(EPSILON, a1Copy.getInitialState());
+        Transition t2 = new Transition(EPSILON, a2Copy.getInitialState());
+        Transition t3 = new Transition(EPSILON, unionFinalState);
+        Transition t4 = new Transition(EPSILON, unionFinalState);
 
         unionInitialState.addTransition(t1);
         unionInitialState.addTransition(t2);
@@ -81,7 +81,7 @@ public class AutomataBuilder {
         Automata a2Copy = new Automata(a2);
 
         State currentFinalState = a1Copy.getFinalState();
-        Transition t = new Transition(EPSYLON, a2Copy.getInitialState());
+        Transition t = new Transition(EPSILON, a2Copy.getInitialState());
 
         currentFinalState.addTransition(t);
 
@@ -95,10 +95,10 @@ public class AutomataBuilder {
         State closureInitialState = new State();
         State closureFinalState = new State();
 
-        Transition t1 = new Transition(EPSYLON, a1Copy.getInitialState());
-        Transition t2 = new Transition(EPSYLON, a1Copy.getInitialState());
-        Transition t3 = new Transition(EPSYLON, closureFinalState);
-        Transition t4 = new Transition(EPSYLON, closureFinalState);
+        Transition t1 = new Transition(EPSILON, a1Copy.getInitialState());
+        Transition t2 = new Transition(EPSILON, a1Copy.getInitialState());
+        Transition t3 = new Transition(EPSILON, closureFinalState);
+        Transition t4 = new Transition(EPSILON, closureFinalState);
 
         closureInitialState.addTransition(t1);
         closureInitialState.addTransition(t4);
