@@ -19,6 +19,9 @@ public class State {
 
     public State(State s) {
         this(s.id);
+        for (Transition t : s.getTransitions()) {
+            this.transitions.add(new Transition(t));
+        }
     }
 
     public void setId(int id) {
