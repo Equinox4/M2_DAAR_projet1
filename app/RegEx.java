@@ -59,17 +59,22 @@ public class RegEx {
     }
 
     private static RegExTree parse(ArrayList<RegExTree> result) throws Exception {
-        while (containParenthese(result))
+        while (containParenthese(result)) {
             result = processParenthese(result);
-        while (containEtoile(result))
+        }
+        while (containEtoile(result)) {
             result = processEtoile(result);
-        while (containConcat(result))
+        }
+        while (containConcat(result)) {
             result = processConcat(result);
-        while (containAltern(result))
+        }
+        while (containAltern(result)) {
             result = processAltern(result);
+        }
 
-        if (result.size() > 1)
+        if (result.size() > 1) {
             throw new Exception();
+        }
 
         return removeProtection(result.get(0));
     }
@@ -159,6 +164,7 @@ public class RegEx {
         ArrayList<RegExTree> result = new ArrayList<>();
         boolean found = false;
         boolean firstFound = false;
+        // a|b.c
         for (RegExTree t : trees) {
             if (!found && !firstFound && t.root != Operand.ALTERN.getValue()) {
                 firstFound = true;
