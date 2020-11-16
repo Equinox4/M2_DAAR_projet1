@@ -31,13 +31,10 @@ public class Automata {
     }
 
     private State getFinalState(State s) {
-        if (s.getTransitions().isEmpty()) {
-            return s;
-        }
         for (Transition t : s.getTransitions()) {
             this.getFinalState(t.next);
         }
-        return null;
+        return s;
     }
 
     public String toString() {

@@ -5,11 +5,16 @@ import java.util.ArrayList;
 public class AutomataBuilder {
     private ArrayList<Automata> automatons;
     private int currentState;
-    private static final String EPSILON = "epsylon"; // epsilon :P
+    private static final String EPSILON = "epsilon";
+    private boolean shouldConcat = false;
 
     public AutomataBuilder() {
         this.automatons = new ArrayList<>();
         this.currentState = 0;
+    }
+
+    public ArrayList<Automata> getAutomatons() {
+        return this.automatons;
     }
 
     // la methode finale doit retourner un automate de type NDFA
@@ -29,12 +34,28 @@ public class AutomataBuilder {
 
             Automata a = new Automata(sInitial);
             this.automatons.add(a);
-        } 
+        }
         else {
             for (RegExTree t : ret.subTrees) {
-                if (ret.root == Operand.CONCAT.getValue()) {
-                    
+                if (shouldConcat) {
+                    Automata left = this.automatons.get(this.automatons.size() - 1);
+                    this.automatons.remove(this.automatons.size() - 1);
+                    Automata right = this.automatons.get(this.automatons.size() - 1);
+                    this.automatons.remove(this.automatons.size() - 1);
+
+                    this.automatons.add(this.concatenationAutomata(left, right));
                 }
+                if (ret.root == Operand.CONCAT.getValue() && !shouldConcat) {
+                    this.shouldConcat = true;
+                }
+
+                if (ret.root == Operand.ALTERN.getValue()) {
+
+                }
+                if (ret.root == Operand.ETOILE.getValue()) {
+
+                }
+
                 this.parseRegExTree(t);
             }
         }
