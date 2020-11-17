@@ -5,7 +5,6 @@ import java.util.List;
 
 public class AutomatonBuilder {
     private ArrayList<Automaton> automatons;
-    private int currentState;
     private static final String EPSILON = "epsilon";
     private boolean concat = false;
     private boolean altern = false;
@@ -13,7 +12,6 @@ public class AutomatonBuilder {
 
     public AutomatonBuilder() {
         this.automatons = new ArrayList<>();
-        this.currentState = 0;
     }
 
     public List<Automaton> getAutomatons() {
@@ -24,6 +22,17 @@ public class AutomatonBuilder {
         Automaton a = new Automaton();
         State fs = a.makeState();
         Transition t = new Transition(ret.getRootString(), fs);
+
+        a.getInitialState().addTransition(t);
+
+        return a;
+    }
+
+    public Automaton makeEpsilonAutomaton() {
+        Automaton a = new Automaton();
+
+        State fs = a.makeState();
+        Transition t = new Transition(AutomatonBuilder.EPSILON, fs);
 
         a.getInitialState().addTransition(t);
 
