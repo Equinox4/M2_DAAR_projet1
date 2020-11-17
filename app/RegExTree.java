@@ -35,5 +35,7 @@ public class RegExTree {
         return Character.toString((char) root);
     }
 
-
+    public String getRootString() {
+        return Character.toString((char)this.root);
+    }
 }
