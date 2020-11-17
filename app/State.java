@@ -13,7 +13,7 @@ public class State {
         this.isFinal = true;
         this.transitions = new ArrayList<>();
     }
-// TODO: gérer correctement les ids
+
     public State(int id) {
         this();
         this.id = id;
