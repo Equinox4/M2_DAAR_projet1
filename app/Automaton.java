@@ -1,20 +1,22 @@
 package app;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Automaton {
-    private static final AtomicInteger stateNumber = new AtomicInteger(0); 
-    private final int id;
+    private int stateNumber;
     private State sInitial;
 
     public Automaton() {
-        this.id = Automaton.stateNumber.getAndIncrement();
-        this.sInitial = new State(this.id);
+        this.stateNumber = 0;
+        this.sInitial = new State(this.stateNumber);
     }
 
     public Automaton(Automaton a) {
         this.sInitial = a.getInitialState();
-        this.id = a.id;
+        this.stateNumber = a.getStateNumber();
+    }
+
+    public State makeState() {
+        this.stateNumber++;
+        return new State(this.stateNumber);
     }
 
     public State getInitialState() {
@@ -32,8 +34,8 @@ public class Automaton {
         return s;
     }
 
-    public int getCurrentid() {
-        return this.id;
+    public int getStateNumber() {
+        return this.stateNumber;
     }
 
     public String toString() {
