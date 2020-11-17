@@ -20,7 +20,9 @@ public class AutomatonBuilder {
         return this.automatons;
     }
 
-
+    private Automaton makeXAutomaton(RegExTree ret) {
+        Automaton a = new Automaton();
+    }
 
     public String toString() {
         return this.automatons.toString();
