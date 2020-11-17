@@ -20,8 +20,14 @@ public class AutomatonBuilder {
         return this.automatons;
     }
 
-    private Automaton makeXAutomaton(RegExTree ret) {
+    public Automaton makeXAutomaton(RegExTree ret) {
+        State fs = new State();
+        Transition t = new Transition(ret.getRootString(), fs);
+
         Automaton a = new Automaton();
+        a.getInitialState().addTransition(t);
+
+        return a;
     }
 
     public String toString() {
