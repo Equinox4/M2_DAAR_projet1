@@ -21,10 +21,10 @@ public class AutomatonBuilder {
     }
 
     public Automaton makeXAutomaton(RegExTree ret) {
-        State fs = new State();
+        Automaton a = new Automaton();
+        State fs = a.makeState();
         Transition t = new Transition(ret.getRootString(), fs);
 
-        Automaton a = new Automaton();
         a.getInitialState().addTransition(t);
 
         return a;
