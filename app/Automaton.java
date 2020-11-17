@@ -23,6 +23,10 @@ public class Automaton {
         return this.sInitial;
     }
 
+    public void setInitialState(State s) {
+        this.sInitial = s;
+    }
+
     public State getFinalState() {
         return this.getFinalState(this.sInitial);
     }
@@ -38,6 +42,8 @@ public class Automaton {
         return this.stateNumber;
     }
 
+    // TODO: faire une fonction pour re-numéroter les états
+
     public String toString() {
         State current = this.sInitial;
         String res = current.toString();
@@ -49,9 +55,4 @@ public class Automaton {
         }
         return res;
     }
-/*
-    public int getNbState() {
-        return this.transitions.keySet().size();
-    }
-*/
 }
