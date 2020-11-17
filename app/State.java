@@ -6,9 +6,11 @@ import java.util.List;
 public class State {
     private int id;
     private ArrayList<Transition> transitions; // quelles sont les transitions qui partent de cet etat
-    private boolean isFinal = true;
+    private boolean isFinal;
 
     public State() {
+        this.id = 0;
+        this.isFinal = true;
         this.transitions = new ArrayList<>();
     }
 // TODO: gérer correctement les ids
