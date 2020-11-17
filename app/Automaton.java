@@ -1,18 +1,20 @@
 package app;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Automaton {
+    private static final AtomicInteger stateNumber = new AtomicInteger(0); 
+    private final int id;
     private State sInitial;
 
-    public Automaton(State sInitial) {
-        this.sInitial = sInitial;
+    public Automaton() {
+        this.id = Automaton.stateNumber.getAndIncrement();
+        this.sInitial = new State(this.id);
     }
 
     public Automaton(Automaton a) {
-        this(new State(a.getInitialState()));
-    }
-
-    public void setInitialState(State s) {
-        this.sInitial = s;
+        this.sInitial = a.getInitialState();
+        this.id = a.id;
     }
 
     public State getInitialState() {
@@ -28,6 +30,10 @@ public class Automaton {
             this.getFinalState(t.next);
         }
         return s;
+    }
+
+    public int getCurrentid() {
+        return this.id;
     }
 
     public String toString() {
