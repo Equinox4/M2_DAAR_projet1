@@ -2,8 +2,8 @@ package app;
 
 public class Transition {
 
-    String label;
-    State next; // vers quel etat cette transition pointe
+    private String label;
+    private State next; // vers quel etat cette transition pointe
 
     public Transition(String label, State next) {
         this.label = label;
@@ -20,6 +20,10 @@ public class Transition {
 
     public State getNextState() {
         return this.next;
+    }
+
+    public void setNextState(State s) {
+        this.next = s;
     }
 
     public String toString() {
