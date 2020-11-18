@@ -1,7 +1,6 @@
 package app;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class State {
     private int id;
@@ -47,7 +46,7 @@ public class State {
         this.isFinal = false;
     }
 
-    public List<Transition> getTransitions() {
+    public ArrayList<Transition> getTransitions() {
         return this.transitions;
     }
 

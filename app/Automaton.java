@@ -25,17 +25,40 @@ public class Automaton {
 
     public void setInitialState(State s) {
         this.sInitial = s;
+        this.numberize();
+    }
+
+    public void fusionInitialState(State s) {
+        this.sInitial.getTransitions().addAll(s.getTransitions());
+        this.numberize();
+    }
+
+    public void numberize() {
+        this.stateNumber = 0;
+        State current = this.sInitial;
+        for (int i = 0; i < current.getTransitions().size(); i++) {
+            Transition t = current.getTransitions().get(i);
+            t.getNextState().setId(this.stateNumber);
+            this.stateNumber++;
+            if (i == current.getTransitions().size() - 1) {
+                current = t.getNextState();
+            }
+        }
     }
 
     public State getFinalState() {
-        return this.getFinalState(this.sInitial);
-    }
-
-    private State getFinalState(State s) {
-        for (Transition t : s.getTransitions()) {
-            this.getFinalState(t.next);
+        State current = this.sInitial;
+        for (int i = 0; i < current.getTransitions().size(); i++) {
+            Transition t = current.getTransitions().get(i);
+            if (t.getNextState().isFinal()) {
+                return t.getNextState();
+            }
+            if (i == current.getTransitions().size() - 1) {
+                current = t.getNextState();
+            }
         }
-        return s;
+
+        return null;
     }
 
     public int getStateNumber() {
@@ -46,13 +69,19 @@ public class Automaton {
 
     public String toString() {
         State current = this.sInitial;
-        String res = current.toString();
+        String res = "";
 
-        for (Transition t : current.getTransitions()) {
+        for (int i = 0; i < current.getTransitions().size(); i++) {
+            Transition t = current.getTransitions().get(i);
+            res += current.toString();
             res += t.toString();
-            res += t.next.toString();
-            current = t.next;
+            res += t.getNextState().toString();
+            res += " ";
+            if (i == current.getTransitions().size() - 1) {
+                current = t.getNextState();
+            }
         }
+
         return res;
     }
 }
